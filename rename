@@ -1,0 +1,30 @@
+#!/bin/sh
+# rename
+# Renames the plugin
+
+if [ $# -lt 1 ]; then
+	echo 'usage: ./rename "New Plugin Name"'
+	exit 0
+fi
+
+PLUGIN=$1
+LOWERCASE=`echo $PLUGIN | tr A-Z a-z`
+DASH=`echo ${LOWERCASE/ /-}`
+UNDERSCORE=`echo ${LOWERCASE/ /_}`
+CAPITALIZEUNDERSCORE=`echo ${PLUGIN/ /_}`
+UPPERCASE=`echo $UNDERSCORE | tr a-z A-Z`
+
+for filename in `find . -type f`; do
+	if [[ $filename != './rename' ]]; then
+		sed -e "s/Plugin Template/$PLUGIN/g" \
+		    -e "s/plugin-template/$DASH/g" \
+		    -e "s/plugin_template/$UNDERSCORE/g" \
+		    -e "s/Plugin_Template/$CAPITALIZEUNDERSCORE/g" \
+		    -e "s/PLUGIN_TEMPLATE/$UPPERCASE/g" $filename > "$filename.tmp"
+		mv "$filename.tmp" $filename
+		fn=`echo $filename | sed "s/plugin-template/$DASH/g"`
+		mv $filename $fn
+	fi
+done
+
+exit 1
